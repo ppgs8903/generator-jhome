@@ -22,10 +22,9 @@ var gulp = require('gulp'),
 	concat = require('gulp-concat'),
 	//notify = require('gulp-notify'),
 	cache = require('gulp-cache'),
-	livereload = require('gulp-livereload'),
-	mocha = require('gulp-mocha'),
+	livereload = require('gulp-livereload');
 	// 配合打包生产和开发环境
-	gulpif = require('gulp-if'),
+	gulpif = require('gulp-if')
     minimist = require('minimist');
 
 //development & production
@@ -78,12 +77,6 @@ gulp.task('images', function() {
 		.pipe(gulp.dest('dist/img'));
 });
 
-//测试
-gulp.task('test', function () {
-	return gulp.src('test/test.js', {read: false})
-		.pipe(mocha({reporter: 'nyan'}));
-});
-
 // 清理
 gulp.task('clean', function() {
 	return gulp.src(['dist/*'], {read: false})
@@ -92,7 +85,7 @@ gulp.task('clean', function() {
 
 // 预设任务
 gulp.task('default', ['clean'], function() {
-	gulp.start('styles', 'scripts', 'images', 'test');
+	gulp.start('styles', 'scripts', 'images');
 });
 
 // 看手

@@ -5,7 +5,9 @@
 var generators = require('yeoman-generator');
 var chalk = require('chalk');
 var mkdirp = require('mkdirp');
+var spawn = require('child_process').spawn;
 var _s = require('underscore.string');
+
 
 
 module.exports = generators.Base.extend({
@@ -40,19 +42,10 @@ module.exports = generators.Base.extend({
 	},
 
 	writing: {
-
 		gulpfile: function () {
 			this.fs.copyTpl(
-				this.templatePath('gulpfile.babel.js'),
-				this.destinationPath('gulpfile.babel.js'),
-				{
-					date: (new Date).toISOString().split('T')[0],
-					name: this.pkg.name,
-					version: this.pkg.version,
-					includeSass: this.includeSass,
-					includeBootstrap: this.includeBootstrap,
-					testFramework: this.options['test-framework']
-				}
+				this.templatePath('gulpfile.js'),
+				this.destinationPath('gulpfile.js')
 			);
 		}, // end gulpfile
 
@@ -62,7 +55,24 @@ module.exports = generators.Base.extend({
 				this.destinationPath('package.json')
 			);
 		}, // end  packageJSON
-
+		styles: function () {
+			this.fs.copyTpl(
+				this.templatePath('main.scss'),
+				this.destinationPath('app/styles/main.scss')
+			);
+		}, //end style
+		scripts: function () {
+			this.fs.copy(
+				this.templatePath('main.js'),
+				this.destinationPath('app/scripts/main.js')
+			);
+		}, // end script
+		html: function () {
+			this.fs.copyTpl(
+				this.templatePath('index.html'),
+				this.destinationPath('app/index.html')
+			)
+		}, // end html
 		bower: function () {
 			var bowerJson = {
 				name: _s.slugify(this.appname),
@@ -70,14 +80,19 @@ module.exports = generators.Base.extend({
 				dependencies: {}
 			};
 
-			if (this.includeModernizr) {
-				bowerJson.dependencies['modernizr'] = '~2.8.1';
-			}
+			bowerJson.dependencies['jquery'] = '~2.1.4';
 			this.fs.writeJSON('bower.json', bowerJson);
 			this.fs.copy(
 				this.templatePath('bowerrc'),
 				this.destinationPath('.bowerrc')
 			);
 		} // end bower
-	} // end writing
+	}, // end writing
+
+	install: function () {
+		this.installDependencies({
+			skipMessage: this.options['skip-install-message'],
+			skipInstall: this.options['skip-install']
+		});
+	} // end install
 });
